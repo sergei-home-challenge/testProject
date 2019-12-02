@@ -12,8 +12,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 public class Steps {
-    static RequestSpecification requestSpec = Specs.getRequestSpec();
-    static ResponseSpecification responseSpec = Specs.getResponseSpec();
+    private static RequestSpecification requestSpec = Specs.getRequestSpec();
+    private static ResponseSpecification responseSpec = Specs.getResponseSpec();
 
     public static ValidatableResponse getUserByName(String userName) {
         ValidatableResponse user = given()
