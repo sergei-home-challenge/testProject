@@ -1,26 +1,48 @@
 package com.freenow.tests;
 
 import com.freenow.AppTest;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
+import com.freenow.testData.CommonSettings;
+import com.freenow.utlis.Specs;
+import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.junit.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.not;
 
 public class SearchUserTest extends AppTest {
-    @Test
-    public void testSearchSamanthaTest() {
-        RequestSpecification usersReqSpec = new RequestSpecBuilder()
-                .setBaseUri("https://jsonplaceholder.typicode.com/users")
-                .setAccept(ContentType.JSON)
-                .setContentType(ContentType.ANY)
-                .build();
 
-        given()
-                .spec(usersReqSpec)
+    RequestSpecification requestSpec = Specs.getRequestSpec();
+    ResponseSpecification responseSpec = Specs.getResponseSpec();
+
+    //TEST WILL FAIL
+    //ADDED TO SEE HOW WILL IT WORK IN CIRCLECI
+    @Test
+    public void testThatFails() {
+        ValidatableResponse user = given()
+                .params("username", "Samantha")
+                .spec(requestSpec)
+                .when()
+                .get(CommonSettings.USERS_ENDPOINT)
                 .then()
-                .body(containsString("Samantha"));
+                .spec(responseSpec)
+                .assertThat()
+                .body("username", hasItems("NotSamantha"));
+    }
+
+    @Test
+    public void testSearchSamantha() {
+        ValidatableResponse user = given()
+                .params("username", "Samantha")
+                .spec(requestSpec)
+                .when()
+                .get(CommonSettings.USERS_ENDPOINT)
+                .then()
+                .spec(responseSpec)
+                .assertThat()
+                .body("username", hasItems("Samantha"));
     }
 }
