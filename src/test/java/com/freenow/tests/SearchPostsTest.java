@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import static com.freenow.utlis.Steps.getPostsById;
 import static com.freenow.utlis.Steps.getUserByName;
 import static com.freenow.utlis.Steps.getValuesFromResponse;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 public class SearchPostsTest extends AppTest {
 
@@ -26,5 +27,17 @@ public class SearchPostsTest extends AppTest {
         for(Integer item : postsIds){
             LOG.info("Ids of the posts"+ item);
         }
+    }
+
+    @Test
+    public void testSearchPostsByUserIdValidateSchema() {
+        ValidatableResponse user = getUserByName(CommonSettings.TEST_USER);
+        Integer userId = getValuesFromResponse(user)
+                .get(0)
+                .intValue();
+
+        ValidatableResponse posts = getPostsById(userId);
+        posts.assertThat()
+                .body(matchesJsonSchemaInClasspath("postsResponse.json"));
     }
 }

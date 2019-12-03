@@ -13,6 +13,7 @@ import java.util.List;
 import static com.freenow.utlis.Steps.getPostsById;
 import static com.freenow.utlis.Steps.getUserByName;
 import static com.freenow.utlis.Steps.getValuesFromResponse;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 public class SearchCommentsTest extends AppTest {
     @Test
@@ -70,4 +71,17 @@ public class SearchCommentsTest extends AppTest {
             }
         }
     }
+
+    @Test
+    public void testSearchCommentsAndValidateSchema() {
+        ValidatableResponse user = getUserByName(CommonSettings.TEST_USER);
+        Integer userId = getValuesFromResponse(user)
+                .get(0)
+                .intValue();
+
+        ValidatableResponse userPosts = getPostsById(userId);
+        userPosts.assertThat()
+                .body(matchesJsonSchemaInClasspath("postsResponse.json"));
+    }
+
 }
